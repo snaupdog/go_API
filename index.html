@@ -3,45 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book List</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-      }
-      h1 {
-        text-align: center;
-      }
-      ul {
-        list-style-type: none;
-        padding: 0;
-      }
-      li {
-        margin-bottom: 10px;
-        padding: 10px;
-        background-color: #f4f4f4;
-        border-radius: 5px;
-      }
-    </style>
+    <title>Fitness Data</title>
+    <link href="index.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>Book List</h1>
-    <ul id="bookList"></ul>
+        <div class="container">
+        <div class="form-container">
+   <form id="fitnessForm">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+        <label for="heartRate">Heart Rate (comma-separated):</label>
+        <input type="text" id="heartRate" name="heartRate"  required><br><br>
+        <label for="caloriesBurned">Calories Burned:</label>
+        <input type="number" id="caloriesBurned" name="caloriesBurned" required><br><br>
+        <label for="stepCount">Step Count:</label>
+        <input type="number" id="stepCount" name="stepCount" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+        </div>
+
+        <div class="display-container">
+        <h1>Fitness Data</h1>
+    <ul id="fitnessData"></ul>
+
+        </div> 
+
+    </div>
 
     <script>
-      // Fetch book data from microservice and render on the page
-      fetch("http://localhost:8080/books")
+document.getElementById("fitnessForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const formDataObject = {};
+            formData.forEach(function(value, key){
+                formDataObject[key] = value;
+            });
+            fetch("http://localhost:8080/addData", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formDataObject),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                alert("Data added successfully!");
+                location.reload(); // Refresh page to display updated data
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+                alert("An error occurred while adding data.");
+            });
+        });
+
+
+
+
+      // Fetch fitness data from the Go server and render on the page
+      fetch("http://localhost:8080/data")
         .then((response) => response.json())
         .then((data) => {
-          const bookList = document.getElementById("bookList");
-          data.forEach((book) => {
+          const fitnessDataList = document.getElementById("fitnessData");
+          data.forEach((fitnessItem) => {
             const li = document.createElement("li");
-            li.textContent = `${book.title} - ${book.author}`;
-            bookList.appendChild(li);
+            li.textContent = `Date: ${fitnessItem.date}, Heart Rate: ${fitnessItem.heart_tracker}, Calories Burned: ${fitnessItem.calories_burned}, Step Count: ${fitnessItem.step_count}`;
+            fitnessDataList.appendChild(li);
           });
         })
-        .catch((error) => console.error("Error fetching book data:", error));
+        .catch((error) => console.error("Error fetching fitness data:", error));
     </script>
   </body>
-</html>
+</

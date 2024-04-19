@@ -1,0 +1,36 @@
+body {
+  font-family: "rajdhani", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: green;
+}
+h1 {
+  text-align: center;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  margin-bottom: 0px;
+  padding: 0px;
+  background-color: #f4f4f4;
+  border-radius: 5px;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    109.6deg,
+    rgba(0, 0, 0, 0.93) 11.2%,
+    rgb(63, 61, 61) 78.9%
+  );
+}
+.form-container,
+.display-container {
+  padding: 200px;
+}

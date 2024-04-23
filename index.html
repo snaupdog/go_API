@@ -17,7 +17,7 @@
         placeholder="YYYY-MM-DD"
         required
       /><br /><br />
-      <label for="heartRate">heartRate:</label>
+      <label for="heartRate">Heart Rate:</label>
       <input
         type="number"
         id="heartRate"
@@ -37,54 +37,107 @@
     <h2>Fitness Data:</h2>
     <ul id="fitnessData"></ul>
 
-<script>
-    document.getElementById('addDataForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const formData = new FormData(event.target);
-        const data = {
-            date: formData.get('date'),
-            heart_rate: parseInt(formData.get('heartRate')),
-            step_count: parseInt(formData.get('stepCount'))
+    <script>
+      document
+        .getElementById("addDataForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          const data = {
+            date: formData.get("date"),
+            heart_rate: parseInt(formData.get("heartRate")),
+            step_count: parseInt(formData.get("stepCount")),
+          };
+
+          fetch("http://localhost:8080/data", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          })
+            .then((response) => response.json())
+            .then((newData) => {
+              console.log("New data added:", newData);
+              event.target.reset();
+              refreshFitnessDataList();
+            })
+            .catch((error) => console.error("Error adding data:", error));
+        });
+
+      function refreshFitnessDataList() {
+        fetch("http://localhost:8080/data", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const fitnessDataList = document.getElementById("fitnessData");
+            fitnessDataList.innerHTML = "";
+            data.forEach((item) => {
+              const listItem = document.createElement("li");
+              listItem.textContent = `Date: ${item.date}, Heart Rate: ${item.heart_rate}, Step Count: ${item.step_count}`;
+              const deleteButton = document.createElement("button");
+              deleteButton.textContent = "Delete";
+              deleteButton.addEventListener("click", function () {
+                deleteData(item.ID);
+              });
+              listItem.appendChild(deleteButton);
+
+              const updateButton = document.createElement("button");
+              updateButton.textContent = "Update";
+              updateButton.addEventListener("click", function () {
+                updateData(item.ID);
+              });
+              listItem.appendChild(updateButton);
+
+              fitnessDataList.appendChild(listItem);
+            });
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+      }
+
+      function deleteData(id) {
+        fetch(`http://localhost:8080/data/${id}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Data deleted successfully");
+              refreshFitnessDataList();
+            } else {
+              console.error("Failed to delete data");
+            }
+          })
+          .catch((error) => console.error("Error deleting data:", error));
+      }
+
+      function updateData(id, date, heartRate, stepCount) {
+        const newHeartRate = prompt("Enter new Heart Rate:", heartRate);
+        const newStepCount = prompt("Enter new Step Count:", stepCount);
+        const newData = {
+          heart_rate: parseInt(newHeartRate),
+          step_count: parseInt(newStepCount),
         };
 
-        fetch('http://localhost:8080/data', { // Updated endpoint URL
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+        fetch(`http://localhost:8080/data/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newData),
         })
-        .then(response => response.json())
-        .then(newData => {
-            console.log('New data added:', newData);
-            // Clear form fields
-            event.target.reset();
-            // Refresh the fitness data list
-            refreshFitnessDataList();
-        })
-        .catch(error => console.error('Error adding data:', error));
-    });
+          .then((response) => {
+            if (response.ok) {
+              console.log("Data updated successfully");
+              refreshFitnessDataList();
+            } else {
+              console.error("Failed to update data");
+            }
+          })
+          .catch((error) => console.error("Error updating data:", error));
+      }
 
-    function refreshFitnessDataList() {
-        fetch('http://localhost:8080/data', { // Updated endpoint URL
-            method: 'GET',
-        })
-        .then(response => response.json())
-        .then(data => {
-            const fitnessDataList = document.getElementById('fitnessData');
-            fitnessDataList.innerHTML = ''; // Clear previous data
-            data.forEach(item => {
-                const listItem = document.createElement('li');
-                    listItem.textContent = `Date: ${item.date}, heart rate: ${item.heart_rate},Step Count: ${item.step_count}`;
-                fitnessDataList.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
-    }
-
-    // Initial data load
-    refreshFitnessDataList();
-</script>
+      refreshFitnessDataList();
     </script>
   </body>
 </html>

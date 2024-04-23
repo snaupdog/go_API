@@ -9,8 +9,8 @@ import (
 
 type FitnessData struct {
     ID          int    `json:"ID"`
-    Date        string `json:"date"`
     HeartRate   int    `json:"heart_rate"`
+    SleepTime   int    `json:"sleep_time"`
     StepCount   int    `json:"step_count"`
 }
 

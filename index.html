@@ -4,38 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fitness Data</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <h1>Fitness Data</h1>
 
-    <form id="addDataForm">
-      <label for="date">Date:</label>
-      <input
-        type="date"
-        id="date"
-        name="date"
-        placeholder="YYYY-MM-DD"
-        required
-      /><br /><br />
-      <label for="heartRate">Heart Rate:</label>
-      <input
-        type="number"
-        id="heartRate"
-        name="heartRate"
-        required
-      /><br /><br />
-      <label for="stepCount">Step Count:</label>
-      <input
-        type="number"
-        id="stepCount"
-        name="stepCount"
-        required
-      /><br /><br />
-      <button type="submit">Add Data</button>
-    </form>
+    <div class="main-container">
+      <div class="form-container">
+        <form id="addDataForm">
+          <label for="heartRate">Heart Rate:</label>
+          <input
+            type="number"
+            id="heartRate"
+            name="heartRate"
+            required
+          /><br /><br />
+          <label for="sleepTime">Sleep Time:</label>
+          <input
+            type="number"
+            id="sleepTime"
+            name="sleepTime"
+            required
+          /><br /><br />
+          <label for="stepCount">Step Count:</label>
+          <input
+            type="number"
+            id="stepCount"
+            name="stepCount"
+            required
+          /><br /><br />
+          <button type="submit">Add Data</button>
+        </form>
+      </div>
 
-    <h2>Fitness Data:</h2>
-    <ul id="fitnessData"></ul>
+      <div class="list-container">
+        <ul id="fitnessData"></ul>
+      </div>
+    </div>
 
     <script>
       document
@@ -44,9 +49,9 @@
           event.preventDefault();
           const formData = new FormData(event.target);
           const data = {
-            date: formData.get("date"),
             heart_rate: parseInt(formData.get("heartRate")),
             step_count: parseInt(formData.get("stepCount")),
+            sleep_time: parseInt(formData.get("sleepTime")),
           };
 
           fetch("http://localhost:8080/data", {
@@ -75,7 +80,7 @@
             fitnessDataList.innerHTML = "";
             data.forEach((item) => {
               const listItem = document.createElement("li");
-              listItem.textContent = `Date: ${item.date}, Heart Rate: ${item.heart_rate}, Step Count: ${item.step_count}`;
+              listItem.textContent = ` ID: ${item.ID}Heart Rate: ${item.heart_rate}, Step Count: ${item.step_count} , Sleep Time" ${item.sleep_time}`;
               const deleteButton = document.createElement("button");
               deleteButton.textContent = "Delete";
               deleteButton.addEventListener("click", function () {
@@ -114,9 +119,11 @@
       function updateData(id, date, heartRate, stepCount) {
         const newHeartRate = prompt("Enter new Heart Rate:", heartRate);
         const newStepCount = prompt("Enter new Step Count:", stepCount);
+        const newSleepTime = prompt("Enter new Step Count:", sleepTime);
         const newData = {
           heart_rate: parseInt(newHeartRate),
           step_count: parseInt(newStepCount),
+          sleep_time: parseInt(newSleepTime),
         };
 
         fetch(`http://localhost:8080/data/${id}`, {

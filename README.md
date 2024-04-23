@@ -1,17 +1,6 @@
+# Microservice Fitness_data api
+ this api provides basic CRUD (Create, Read, Update, Delete) operations for managing fitness data entries.
 
-
-
-# Gin Microservice Fitness tracker
-
-  # Thingies we need (POST /GET /DELTETE ALL THAT SHIT)
-    - Step count
-    - Distance travelled
-    - Calories Burned
-    - Sleepy time
-    - Heart Rate
-    
-
-##
 
 ## Running the Microservice
 
@@ -26,12 +15,13 @@
 
 
 5. Open `index.html` in a web browser to view the HTML page.
-    - i use python3 -m http.server
+    - use python3 -m http.server
+            OR
+    - just use curl to make http requests to port 8080/data
+
+6. Run the api server in another terminal
+    - go run main.go
 
 ## Dependencies
 
 - [Gin](https://github.com/gin-gonic/gin): Web framework for Go.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

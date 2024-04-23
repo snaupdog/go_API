@@ -12,14 +12,14 @@
     <div class="main-container">
       <div class="form-container">
         <form id="addDataForm">
-          <label for="heartRate">Heart Rate:</label>
+          <label for="heartRate">Heart Rate (bpm):</label>
           <input
             type="number"
             id="heartRate"
             name="heartRate"
             required
           /><br /><br />
-          <label for="sleepTime">Sleep Time:</label>
+          <label for="sleepTime">Sleep Time (in hrs):</label>
           <input
             type="number"
             id="sleepTime"
@@ -80,7 +80,7 @@
             fitnessDataList.innerHTML = "";
             data.forEach((item) => {
               const listItem = document.createElement("li");
-              listItem.textContent = ` ID: ${item.ID}Heart Rate: ${item.heart_rate}, Step Count: ${item.step_count} , Sleep Time" ${item.sleep_time}`;
+              listItem.textContent = ` ID: ${item.ID}Heart Rate: ${item.heart_rate} bpm, Step Count: ${item.step_count} , Sleep Time: ${item.sleep_time} hrs`;
               const deleteButton = document.createElement("button");
               deleteButton.textContent = "Delete";
               deleteButton.addEventListener("click", function () {
@@ -108,6 +108,7 @@
           .then((response) => {
             if (response.ok) {
               console.log("Data deleted successfully");
+              alert("deletion successfull");
               refreshFitnessDataList();
             } else {
               console.error("Failed to delete data");
@@ -119,7 +120,7 @@
       function updateData(id, date, heartRate, stepCount) {
         const newHeartRate = prompt("Enter new Heart Rate:", heartRate);
         const newStepCount = prompt("Enter new Step Count:", stepCount);
-        const newSleepTime = prompt("Enter new Step Count:", sleepTime);
+        const newSleepTime = prompt("Enter new sleep time:", sleepTime);
         const newData = {
           heart_rate: parseInt(newHeartRate),
           step_count: parseInt(newStepCount),

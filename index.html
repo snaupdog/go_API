@@ -4,78 +4,87 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fitness Data</title>
-    <link href="index.css" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
-        <div class="container">
-        <div class="form-container">
-   <form id="fitnessForm">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" required><br><br>
-        <label for="heartRate">Heart Rate (comma-separated):</label>
-        <input type="text" id="heartRate" name="heartRate"  required><br><br>
-        <label for="caloriesBurned">Calories Burned:</label>
-        <input type="number" id="caloriesBurned" name="caloriesBurned" required><br><br>
-        <label for="stepCount">Step Count:</label>
-        <input type="number" id="stepCount" name="stepCount" required><br><br>
-        <button type="submit">Submit</button>
-    </form>
-        </div>
+    <h1>Fitness Data</h1>
 
-        <div class="display-container">
-        <h1>Fitness Data</h1>
+    <form id="addDataForm">
+      <label for="date">Date:</label>
+      <input
+        type="date"
+        id="date"
+        name="date"
+        placeholder="YYYY-MM-DD"
+        required
+      /><br /><br />
+      <label for="heartRate">heartRate:</label>
+      <input
+        type="number"
+        id="heartRate"
+        name="heartRate"
+        required
+      /><br /><br />
+      <label for="stepCount">Step Count:</label>
+      <input
+        type="number"
+        id="stepCount"
+        name="stepCount"
+        required
+      /><br /><br />
+      <button type="submit">Add Data</button>
+    </form>
+
+    <h2>Fitness Data:</h2>
     <ul id="fitnessData"></ul>
 
-        </div> 
+<script>
+    document.getElementById('addDataForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            date: formData.get('date'),
+            heart_rate: parseInt(formData.get('heartRate')),
+            step_count: parseInt(formData.get('stepCount'))
+        };
 
-    </div>
-
-    <script>
-document.getElementById("fitnessForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const formDataObject = {};
-            formData.forEach(function(value, key){
-                formDataObject[key] = value;
-            });
-            fetch("http://localhost:8080/addData", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formDataObject),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                alert("Data added successfully!");
-                location.reload(); // Refresh page to display updated data
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-                alert("An error occurred while adding data.");
-            });
-        });
-
-
-
-
-      // Fetch fitness data from the Go server and render on the page
-      fetch("http://localhost:8080/data")
-        .then((response) => response.json())
-        .then((data) => {
-          const fitnessDataList = document.getElementById("fitnessData");
-          data.forEach((fitnessItem) => {
-            const li = document.createElement("li");
-            li.textContent = `Date: ${fitnessItem.date}, Heart Rate: ${fitnessItem.heart_tracker}, Calories Burned: ${fitnessItem.calories_burned}, Step Count: ${fitnessItem.step_count}`;
-            fitnessDataList.appendChild(li);
-          });
+        fetch('http://localhost:8080/data', { // Updated endpoint URL
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
-        .catch((error) => console.error("Error fetching fitness data:", error));
+        .then(response => response.json())
+        .then(newData => {
+            console.log('New data added:', newData);
+            // Clear form fields
+            event.target.reset();
+            // Refresh the fitness data list
+            refreshFitnessDataList();
+        })
+        .catch(error => console.error('Error adding data:', error));
+    });
+
+    function refreshFitnessDataList() {
+        fetch('http://localhost:8080/data', { // Updated endpoint URL
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            const fitnessDataList = document.getElementById('fitnessData');
+            fitnessDataList.innerHTML = ''; // Clear previous data
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                    listItem.textContent = `Date: ${item.date}, heart rate: ${item.heart_rate},Step Count: ${item.step_count}`;
+                fitnessDataList.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // Initial data load
+    refreshFitnessDataList();
+</script>
     </script>
   </body>
-</
+</html>
